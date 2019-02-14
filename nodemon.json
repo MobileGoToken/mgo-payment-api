@@ -1,0 +1,12 @@
+{
+  "verbose": false,
+  "ignore": [
+    ".git",
+    "node_modules/**/node_modules"
+  ],
+  "watch": [
+    "src/**/*.js"
+  ],
+  "ext": "js, json",
+  "exec": "node --harmony ./src/index.js"
+}
