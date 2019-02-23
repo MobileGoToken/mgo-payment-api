@@ -61,6 +61,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.ENUM('accepted', 'broadcasted', 'confirmed', 'failed'),
       },
+      fund_id: {
+        allowNull: true,
+        type: Sequelize.BIGINT,
+        references: {
+          model: 'funds',
+          key: 'id',
+        },
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

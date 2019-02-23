@@ -5,7 +5,7 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.32.3.0/24
+        - subnet: 172.32.2.0/24
 
 services:
   payment-api:
@@ -21,7 +21,7 @@ services:
       - postgres
     networks:
       net-driver:
-        ipv4_address: 172.32.3.2 
+        ipv4_address: 172.32.2.2 
   postgres:
     image: postgres
     environment:
@@ -32,4 +32,4 @@ services:
       - "5432"
     networks:
       net-driver:
-        ipv4_address: 172.32.3.3
+        ipv4_address: 172.32.2.3

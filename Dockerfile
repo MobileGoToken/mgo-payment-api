@@ -4,7 +4,9 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN yarn install
+RUN apt-get update \
+ && apt-get install build-essential \
+ && yarn install
 COPY . .
 
 EXPOSE 3000

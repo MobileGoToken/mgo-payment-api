@@ -2,10 +2,11 @@
 const {
   Transaction,
   TokenTx,
+  Fund,
 } = require('../models');
 
 const registerTx = async (Tx) => {
-  const tx = await Transaction.create(Tx, { include: [TokenTx] });
+  const tx = await Transaction.create(Tx, { include: [TokenTx, Fund] });
   Tx.setId(tx.id);
   return Tx;
 };
@@ -19,7 +20,7 @@ const getTxById = async (id) => {
 };
 
 const getTransactions = async (status) => {
-  return Transaction.findAll({ where: { status }, include: [TokenTx] });
+  return Transaction.findAll({ where: { status }, include: [TokenTx, Fund] });
 };
 
 module.exports = {

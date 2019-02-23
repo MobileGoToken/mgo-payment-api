@@ -1,7 +1,7 @@
-
 module.exports = {
   ACCEPTED: 'accepted',
-  BROADCASTED: 'broadcasted',
+  PROCESSED: 'processed',
+  FUNDED: 'funded',
   CONFIRMED: 'confirmed',
   FAILED: 'failed',
 };

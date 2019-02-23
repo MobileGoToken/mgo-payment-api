@@ -15,9 +15,14 @@ const {
   // ABI_FILE_URL,
   TOKEN_ADDRESS,
   TOKEN_DECIMALS,
+  TOKEN_SYMBOL,
+  TOKEN_NAME,
+  TOKEN_TRANSFER_GAS,
+  ETHERUM_TRANSFER_GAS,
 
   KEYFILE_PATH,
   KEYFILE_PASS,
+  KEYFILE_ADDRESS,
 } = process.env;
 
 
@@ -34,15 +39,22 @@ module.exports = {
       abi,
       address: TOKEN_ADDRESS,
       decimals: TOKEN_DECIMALS,
+      symbol: TOKEN_SYMBOL,
+      name: TOKEN_NAME,
     },
     account: {
       keyfile: KEYFILE_PATH,
       password: KEYFILE_PASS,
+      address: KEYFILE_ADDRESS,
     },
     net: {
       options: {
         transactionBlockTimeout: 10,
       },
+    },
+    gas: {
+      eth: ETHERUM_TRANSFER_GAS,
+      token: TOKEN_TRANSFER_GAS,
     },
   },
 

@@ -60,6 +60,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.ENUM('accepted', 'broadcasted', 'confirmed', 'failed'),
     },
+    fundId: {
+      allowNull: true,
+      type: DataTypes.BIGINT,
+      field: 'fund_id',
+    },
   },
   {
     timestamps: true,
@@ -72,6 +77,9 @@ module.exports = (sequelize, DataTypes) => {
   Transaction.associate = function (models) {
     models.Transaction.hasOne(models.TokenTx, {
       foreignKey: 'transactionId',
+    });
+    models.Transaction.belongsTo(models.Fund, {
+      foreignKey: 'fund_id',
     });
   };
   return Transaction;

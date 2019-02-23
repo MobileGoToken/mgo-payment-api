@@ -15,17 +15,32 @@ const checkTransactionSchema = Joi.object().keys({
   transaction: transaction.required(),
 });
 
-const standardTransactionsSchema = Joi.object().keys({
+const standardTransactionSchema = Joi.object().keys({
   rawTransaction: hexRegex.required(),
+});
+
+const feelessTransactionSchema = Joi.object().keys({
+  rawTransaction: hexRegex.required(),
+  hash: Joi.string().required(),
 });
 
 const transactionIdSchema = Joi.object().keys({
   id: Joi.number().positive().required(),
 });
 
+const fundSchema = Joi.object().keys({
+  from: address.required(),
+  to: address.required(),
+  value: Joi.number().positive().required(),
+  data: hexRegex.optional(),
+  type: Joi.string().valid('service', 'privileged'),
+});
+
 module.exports = {
   addressSchema,
   checkTransactionSchema,
-  standardTransactionsSchema,
+  standardTransactionSchema,
+  feelessTransactionSchema,
   transactionIdSchema,
+  fundSchema,
 };

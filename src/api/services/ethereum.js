@@ -1,5 +1,6 @@
 
 const Web3 = require('web3');
+const EthereumTx = require('ethereumjs-tx');
 
 const { eth } = require('../../config');
 const { openKeyFile } = require('../utils/keyfile');
@@ -9,7 +10,7 @@ const {
   InternalServerError,
 } = require('../utils/errors');
 
-const { FAILED } = require('../constants/tx_status');
+const { FAILED, BROADCASTED } = require('../constants/tx_status');
 
 const {
   updateTxStatus,
@@ -38,23 +39,60 @@ const getNonce = async (address) => {
   return { nonce };
 };
 
-const fundWallet = async (Tx) => {
-  const keyfile = await openKeyFile();
-  const hash = keyfile.signTransaction({
-    to: Tx.from,
-    value: Tx.value,
-  });
-  return { hash };
+const fundWallet = async (Fund) => {
+  try {
+    const keyfile = await openKeyFile();
+    const acc = await web3.eth.accounts.decrypt(keyfile, eth.account.password);
+
+    const rawTx = await acc.signTransaction({
+      to: Fund.from,
+      value: web3.utils.toWei(Fund.fee.toString(), 'ether'),
+      gas: await hexToNum(eth.gas.eth),
+    });
+
+    const Tx = new EthereumTx(rawTx.rawTransaction);
+    web3.eth.sendSignedTransaction(rawTx.rawTransaction);
+
+    return { hash: `0x${Tx.hash().toString('hex')}` };
+  } catch (err) {
+    console.log(err);
+    throw new InternalServerError();
+  }
 };
 
 const sendRawTransaction = async (Tx) => {
-  return web3.eth.sendSignedTransaction(Tx.rawTransaction)
-    .catch((err) => {
-      updateTxStatus(Tx, FAILED);
-      handleEthereumError(err);
-    });
+  try {
+    const hash = await web3.eth.sendSignedTransaction(Tx.rawTransaction);
+    updateTxStatus(Tx, BROADCASTED);
+    return hash;
+  } catch (err) {
+    updateTxStatus(Tx, FAILED);
+    handleEthereumError(err);
+    return null;
+  }
 };
 
+const getTransferGasCost = async (Tx) => {
+  return Tx.data
+    ? contract.methods.transfer(Tx.to, Tx.value, Tx.data).estimateGas({ from: Tx.from })
+    : contract.methods.transfer(Tx.to, Tx.value).estimateGas({ from: Tx.from });
+};
+
+const weiToEth = async (wei) => {
+  return web3.utils.fromWei(wei.toString(), 'ether');
+};
+
+const ethToWei = async (ether) => {
+  return web3.utils.toWei(ether);
+};
+
+const hexToNum = async (hex) => {
+  return web3.utils.hexToNumber(hex);
+};
+
+const numToHex = async (num) => {
+  return web3.utils.toHex(num);
+};
 
 const handleEthereumError = (err) => {
   const { code } = JSON.parse(err.message.substr(12));
@@ -67,6 +105,19 @@ const handleEthereumError = (err) => {
   }
 };
 
+const transferToken = async (to, value, data = '0x') => {
+  const keyfile = await openKeyFile();
+  const acc = await web3.eth.accounts.decrypt(keyfile, eth.account.password);
+
+  const rawTx = await acc.signTransaction({
+    to: eth.token.address,
+    gas: await hexToNum(eth.gas.token),
+    data: await contract.methods
+      .transfer(to, (value * (10 ** eth.token.decimals)), web3.utils.fromAscii(data)).encodeABI(),
+  });
+
+  web3.eth.sendSignedTransaction(rawTx.rawTransaction);
+};
 
 module.exports = {
   getBalance,
@@ -75,4 +126,10 @@ module.exports = {
   getNonce,
   fundWallet,
   sendRawTransaction,
+  getTransferGasCost,
+  weiToEth,
+  ethToWei,
+  hexToNum,
+  numToHex,
+  transferToken,
 };

@@ -1,5 +1,5 @@
 
-const { validateAddress } = require('../validation/ethereum');
+const { validateAddress } = require('../validation');
 
 
 const ethService = require('../services/ethereum');

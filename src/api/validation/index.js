@@ -1,10 +1,12 @@
 
-const validate = require('../validator');
+const validate = require('./validator');
 const {
   addressSchema,
   checkTransactionSchema,
-  standardTransactionsSchema,
+  standardTransactionSchema,
+  feelessTransactionSchema,
   transactionIdSchema,
+  fundSchema,
 } = require('./schemas');
 
 const validateAddress = async (body) => {
@@ -16,16 +18,26 @@ const validateCheckTransaction = async (body) => {
 };
 
 const validateStandardTransaction = async (body) => {
-  return validate(body, standardTransactionsSchema);
+  return validate(body, standardTransactionSchema);
+};
+
+const validateFeelessTransaction = async (body) => {
+  return validate(body, feelessTransactionSchema);
 };
 
 const validateTransactionId = async (body) => {
   return validate(body, transactionIdSchema);
 };
 
+const validateFundRegister = async (body) => {
+  return validate(body, fundSchema);
+};
+
 module.exports = {
   validateAddress,
   validateCheckTransaction,
   validateStandardTransaction,
+  validateFeelessTransaction,
   validateTransactionId,
+  validateFundRegister,
 };

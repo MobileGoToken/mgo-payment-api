@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const errorGroup = require('./error_group');
+const errorGroup = require('./error_list');
 
 class ExtendableError extends Error {
   constructor(message, status = httpStatus.INTERNAL_SERVER_ERROR, stack, errorCode = 1000) {

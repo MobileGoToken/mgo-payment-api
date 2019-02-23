@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 
 const {
   ExtendableError,
-  InternalError,
+  InternalServerError,
   NotFoundError,
   ValidationError,
 } = require('../utils/errors');
@@ -11,7 +11,7 @@ const { nodeEnv } = require('../../config');
 const normalizer = (err, req, res, next) => {
   if (!(err instanceof ExtendableError)) {
     console.log(err);
-    return handler(new InternalError('Internal server Error', httpStatus.INTERNAL_SERVER_ERROR, err.stack), req, res);
+    return handler(new InternalServerError('Internal Server Error', httpStatus.INTERNAL_SERVER_ERROR, 1000, err.stack), req, res);
   }
   return handler(err, req, res);
 };
